@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Подтверждение Email</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
+    <style>
+        /* CSS для Темной темы */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #111111 !important;
+                color: #eeeeee !important;
+            }
+            .main-container {
+                background-color: #1a1a1a !important;
+            }
+            .code-block {
+                /* Чтобы светло-серый фон не инвертировался в черный */
+                background-color: #2a2a2a !important;
+                border-color: #43e97b !important;
+                color: #43e97b !important;
+            }
+        }
+
+        /* Общие стили для центрирования */
+        .logo-container {
+            text-align: center !important;
+            margin: 0 auto !important;
+            width: 100% !important;
+        }
+
+        .logo-img {
+            max-width: 100% !important;
+            height: auto !important;
+            display: block !important;
+            margin: 0 auto !important;
+            border-radius: 12px !important;
+            border: 2px solid #54e943 !important;
+        }
+    </style>
+</head>
+<body style="font-family: Arial, sans-serif; background: white; color: #333; padding: 40px 20px; margin: 0;">
+
+<div class="main-container" style="max-width: 600px; margin: 0 auto;">
+
+    <!-- Исправленный блок с логотипом -->
+    <div class="logo-container" style="margin-bottom: 20px;">
+        <img src="https://res.cloudinary.com/dyf7zdykz/image/upload/v1765299489/IMG_2359_ttyakx.jpg"
+             alt="{{.AppName}} Logo"
+             class="logo-img"
+             style="max-width: 400px; width: 100%;">
+    </div>
+
+    <div style="margin-bottom: 40px; text-align: center; padding-top: 10px;">
+        <div style="font-size: 24px; font-weight: bold; color: #222; margin-bottom: 8px;">
+            {{.AppName}}
+        </div>
+        <div style="font-size: 18px; color: #666;">
+            Код подтверждения
+        </div>
+    </div>
+
+    <div style="font-size: 16px; color: #444; margin-bottom: 50px; text-align: center;">
+        Здравствуйте, {{.UserName}}!
+    </div>
+
+    <div style="margin: 60px 0; text-align: center;">
+        <div style="font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 40px; font-weight: bold;">
+            Код подтверждения
+        </div>
+
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 40px auto;">
+            <tr>
+                <td style="padding: 0 7.5px;">
+                    <div class="code-block" style="width: 80px; height: 100px; display: table-cell; vertical-align: middle; background: #f8f9fa; border: 3px solid #43e97b; border-radius: 16px; font-size: 48px; font-weight: bold; color: #43e97b; font-family: 'Courier New', monospace; text-align: center;">
+                        {{if ge (len .Code) 1}}{{slice .Code 0 1}}{{end}}
+                    </div>
+                </td>
+                <td style="padding: 0 7.5px;">
+                    <div class="code-block" style="width: 80px; height: 100px; display: table-cell; vertical-align: middle; background: #f8f9fa; border: 3px solid #43e97b; border-radius: 16px; font-size: 48px; font-weight: bold; color: #43e97b; font-family: 'Courier New', monospace; text-align: center;">
+                        {{if ge (len .Code) 2}}{{slice .Code 1 2}}{{end}}
+                    </div>
+                </td>
+                <td style="padding: 0 7.5px;">
+                    <div class="code-block" style="width: 80px; height: 100px; display: table-cell; vertical-align: middle; background: #f8f9fa; border: 3px solid #43e97b; border-radius: 16px; font-size: 48px; font-weight: bold; color: #43e97b; font-family: 'Courier New', monospace; text-align: center;">
+                        {{if ge (len .Code) 3}}{{slice .Code 2 3}}{{end}}
+                    </div>
+                </td>
+                <td style="padding: 0 7.5px;">
+                    <div class="code-block" style="width: 80px; height: 100px; display: table-cell; vertical-align: middle; background: #f8f9fa; border: 3px solid #43e97b; border-radius: 16px; font-size: 48px; font-weight: bold; color: #43e97b; font-family: 'Courier New', monospace; text-align: center;">
+                        {{if ge (len .Code) 4}}{{slice .Code 3 4}}{{end}}
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div style="font-size: 14px; color: #43e97b; font-weight: 500; margin-top: 30px;">
+            Время действительности кода - {{.ExpiryMinutes}} минуты
+        </div>
+    </div>
+
+    <div style="font-size: 16px; color: #555; margin: 30px 0; line-height: 1.6; padding: 0 20px; text-align: center;">
+        Введите этот код для подтверждения учетных данных.
+    </div>
+
+    <div style="font-size: 15px; color: #777; margin: 30px 0; line-height: 1.6; padding: 0 20px; text-align: center;">
+        Если вы получили это письмо по ошибке, вам не нужно ничего делать.
+    </div>
+
+    <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #e9ecef; color: #888; font-size: 14px; text-align: center;">
+        <p>С уважением, <span style="color: #43e97b; font-weight: bold;">команда {{.AppName}}</span></p>
+        <p style="margin-top: 15px; font-size: 13px; color: #43e97b; font-weight: 500;">
+            Спасибо за использование нашего приложения!
+        </p>
+        <p style="margin-top: 20px; font-size: 13px;">
+            Поддержка:
+            <a href="mailto:{{.SupportEmail}}" style="color: #43e97b; font-weight: bold; text-decoration: none;">
+                {{.SupportEmail}}
+            </a>
+        </p>
+    </div>
+
+</div>
+</body>
+</html>

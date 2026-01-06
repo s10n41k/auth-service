@@ -1,0 +1,15 @@
+env: local
+
+listen:
+  type: port
+  port: 8787
+  bind_ip: 0.0.0.0
+
+redis:
+  host:
+  port:
+  password:
+
+grpc:
+  port: 44044
+  timeout: 5s
