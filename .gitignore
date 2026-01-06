@@ -1,0 +1,26 @@
+# Compiled binaries
+*.exe
+*.exe~
+*.dll
+*.so
+.env
+*.dylib
+bin/
+auth-service
+
+# Test cache
+coverage.out
+*.test
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Go modules (но go.sum нужно коммитить!)
+# go.sum - ЭТОТ ФАЙЛ НУЖНО КОММИТИТЬ!
