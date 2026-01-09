@@ -1,7 +1,9 @@
-name: CI/CD
+name: CI/CD with Secrets Test
+
 on:
   push:
     branches: [main]
+  workflow_dispatch:  # ручной запуск
 
 jobs:
   test:
@@ -14,12 +16,77 @@ jobs:
       - run: go mod download
       - run: cd internal/tests/tests && go test -v ./...
 
-  docker:
+  docker-build:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Clear Docker cache
-        run: docker builder prune -f
       - name: Build Docker image
-        run: docker build --no-cache -t auth-service:test .
+        run: docker build --no-cache -t auth-service:ci .
+
+      - name: Save Docker image
+        run: docker save auth-service:ci -o auth-service-ci.tar
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: auth-service-ci.tar
+
+  test-with-secrets:
+    needs: docker-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Docker image
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+
+      - name: Load Docker image
+        run: docker load -i auth-service-ci.tar
+
+      - name: Test with GitHub Secrets
+        run: |
+          # Проверка доступности секретов
+          if [ -z "${{ secrets.PROD_TOKEN_ACCESS_SECRET }}" ]; then
+            echo "ERROR: PROD_TOKEN_ACCESS_SECRET не найден"
+            exit 1
+          fi
+          
+          if [ -z "${{ secrets.PROD_TOKEN_REFRESH_SECRET }}" ]; then
+            echo "ERROR: PROD_TOKEN_REFRESH_SECRET не найден"
+            exit 1
+          fi
+          
+          echo "Секреты доступны"
+          
+          # Запускаем Redis
+          docker run -d --name test-redis redis:7-alpine
+          sleep 3
+          
+          # Запускаем сервис с секретами
+          echo "Запускаем auth-service с GitHub Secrets..."
+          docker run -d \
+            --name auth-service-test \
+            --link test-redis:redis \
+            -e TOKEN_ACCESS_SECRET="${{ secrets.PROD_TOKEN_ACCESS_SECRET }}" \
+            -e TOKEN_REFRESH_SECRET="${{ secrets.PROD_TOKEN_REFRESH_SECRET }}" \
+            -e REDIS_URL="redis://redis:6379" \
+            auth-service:ci
+          
+          sleep 5
+          
+          # Проверяем запуск
+          if docker ps | grep -q auth-service-test; then
+            echo "Сервис запущен с GitHub Secrets"
+            echo "Логи:"
+            docker logs auth-service-test --tail 10
+          else
+            echo "Сервис не запустился"
+            docker logs auth-service-test
+            exit 1
+          fi
+          
+          # Очистка
+          docker stop auth-service-test test-redis
+          docker rm auth-service-test test-redis
