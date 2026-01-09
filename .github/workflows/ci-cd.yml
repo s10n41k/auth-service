@@ -49,12 +49,12 @@ jobs:
         run: |
           # Проверка доступности секретов
           if [ -z "${{ secrets.TOKEN_ACCESS_SECRET }}" ]; then
-            echo "ERROR: PROD_TOKEN_ACCESS_SECRET не найден"
+            echo "ERROR: TOKEN_ACCESS_SECRET не найден"
             exit 1
           fi
           
           if [ -z "${{ secrets.TOKEN_REFRESH_SECRET }}" ]; then
-            echo "ERROR: PROD_TOKEN_REFRESH_SECRET не найден"
+            echo "ERROR: TOKEN_REFRESH_SECRET не найден"
             exit 1
           fi
           
@@ -69,8 +69,8 @@ jobs:
           docker run -d \
             --name auth-service-test \
             --link test-redis:redis \
-            -e TOKEN_ACCESS_SECRET="${{ secrets.PROD_TOKEN_ACCESS_SECRET }}" \
-            -e TOKEN_REFRESH_SECRET="${{ secrets.PROD_TOKEN_REFRESH_SECRET }}" \
+            -e TOKEN_ACCESS_SECRET="${{ secrets.TOKEN_ACCESS_SECRET }}" \
+            -e TOKEN_REFRESH_SECRET="${{ secrets.TOKEN_REFRESH_SECRET }}" \
             -e REDIS_URL="redis://redis:6379" \
             auth-service:ci
           
